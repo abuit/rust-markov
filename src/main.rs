@@ -17,11 +17,11 @@ fn main() {
     //Build a vector with words, each word a weight - a chance to be chosen
     //This will be the occurrence of this word after the previous word in the provided text.
     let mut words_weighted = Vec::new();
-    words_weighted.push((String::from("Lorem"), 5));
-    words_weighted.push((String::from("Ipsum"), 5));
-    words_weighted.push((String::from("Dolor"), 5));
-    words_weighted.push((String::from("Sit"), 5));
-    words_weighted.push((String::from("Amet"), 14));
+    words_weighted.push(("Lorem", 5));
+    words_weighted.push(("Ipsum", 5));
+    words_weighted.push(("Dolor", 5));
+    words_weighted.push(("Sit", 5));
+    words_weighted.push(("Amet", 14));
 
     //Use the weight to create a distribution so we can run a random between 1 and highest and pick a value.
     let ref_words_weighted = &mut words_weighted;
@@ -44,7 +44,7 @@ fn main() {
     */
 }
 
-fn modify_to_distributed_range(words_weighted: &mut Vec<(String, i32)>)
+fn modify_to_distributed_range(words_weighted: &mut Vec<(&str, i32)>)
 {
     let mut sum = 0;
     for x in words_weighted {
@@ -54,7 +54,7 @@ fn modify_to_distributed_range(words_weighted: &mut Vec<(String, i32)>)
 }
 
 //Pick a value from the distributed vector.
-fn pick_word(words: &Vec<(String, i32)>) -> String
+fn pick_word(words: &Vec<(&str, i32)>) -> String
 {
     let max_value = words.last().unwrap().1;
     let i: i32 = rand::thread_rng().gen_range(1, max_value);
