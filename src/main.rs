@@ -24,11 +24,12 @@ fn main() {
     words_weighted.push((String::from("Amet"), 14));
 
     //Use the weight to create a distribution so we can run a random between 1 and highest and pick a value.
-    let words_distributed = create_distributed_range(&words_weighted);
+    let ref_words_weighted = &mut words_weighted;
+    modify_to_distributed_range(ref_words_weighted);
 
     let mut words_printed = 0;
     loop {
-        let result = pick_word(&words_distributed);
+        let result = pick_word(&words_weighted);
         print!("{} ", result);
         words_printed += 1;
         if words_printed == 50
@@ -43,15 +44,13 @@ fn main() {
     */
 }
 
-fn create_distributed_range(words_weighted: &Vec<(String, i32)>) -> Vec<(String, i32)>
+fn modify_to_distributed_range(words_weighted: &mut Vec<(String, i32)>)
 {
     let mut sum = 0;
-    let mut words_distributed = Vec::new();
     for x in words_weighted {
         sum = sum + x.1;
-        words_distributed.push((String::from(x.0.to_owned()), sum));
+        x.1 = sum;
     }
-    words_distributed
 }
 
 //Pick a value from the distributed vector.
