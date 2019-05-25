@@ -1,0 +1,1 @@
+WIP - Attempt at creating a markov chain generator in rust
