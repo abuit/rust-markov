@@ -16,7 +16,16 @@ fn main() {
 
     let lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
-    create_word_index(lorem);
+    let words_weighted_2 = create_word_index(lorem);
+
+    for w in words_weighted_2
+    {
+        println!("{}", w.0);
+        for sw in w.1
+        {
+            println!(" -> {} {}", sw.0, sw.1);
+        }
+    }
 
     //Build a vector with words, each word a weight - a chance to be chosen
     //This will be the occurrence of this word after the previous word in the provided text.
@@ -53,30 +62,45 @@ fn create_word_index (text: &str) -> Vec<(&str, Vec<(&str, i32)>)>
     let mut counter = 0;
     let mut word_index: Vec<(&str, Vec<(&str, i32)>)> = Vec::new();
     let mut word_start = 0;
+    let mut preceding_word: &str = "";
     while counter < text.len()
     {
-        if &text[counter..counter + 1] == " "
+        if &text[counter..counter + 1] == " " || counter + 1 == text.len() 
         {
-            println!("word: {} ", &text[word_start..counter]);
+            if counter + 1 == text.len()
+            {
+                counter = counter + 1;
+            }
 
-            if !word_index.iter().any(|known_word: &(&str, std::vec::Vec<(&str, i32)>)| known_word.0 == &text[word_start..counter])
+            println!("word: {} ", &text[word_start..counter]);
+            println!("preceded by word: {} ", preceding_word);
+
+            if !word_index.iter().any(|known_word: &(&str, Vec<(&str, i32)>)| known_word.0 == &text[word_start..counter])
             {
                 println!("word {} is new!", &text[word_start..counter]);
                 word_index.push((&text[word_start..counter], Vec::new()));
             }
+            
+            let preceding_word_option = word_index.iter_mut().find(|known_word| known_word.0 == preceding_word);
+
+            if preceding_word_option != None
+            {
+                let preceding_word_vec = preceding_word_option.unwrap();
+                if !preceding_word_vec.1.iter().any(|subsequent_word| subsequent_word.0 == &text[word_start..counter])
+                {
+                    &preceding_word_vec.1.push((&text[word_start..counter], 1));
+                }
+                else 
+                {
+                    preceding_word_vec.1.iter_mut().find(|subsequent_word| subsequent_word.0 == &text[word_start..counter]).unwrap().1 += 1;
+                }
+            }
+
+            preceding_word = &text[word_start..counter];
 
             //Start the next word
             word_start = counter + 1;
-        }
-        else if counter + 1 == text.len()
-        {
-            println!("last word: {} ", &text[word_start..counter + 1]);
 
-            if !word_index.iter().any(|known_word: &(&str, std::vec::Vec<(&str, i32)>)| known_word.0 == &text[word_start..counter + 1])
-            {
-                println!("word {} is new!", &text[word_start..counter + 1]);
-                word_index.push((&text[word_start..counter + 1], Vec::new()));
-            }
         }
 
         counter += 1;
