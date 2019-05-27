@@ -54,11 +54,8 @@ fn create_word_graph(text: &str) -> Vec<(&str, Vec<(&str, i32)>)>
             }
             
             //Find the preceding word
-            let preceding_word_option = word_graph.iter_mut().find(|known_word| known_word.0 == preceding_word);
-
-            if preceding_word_option != None
+            if let Some(preceding_word_vec) = word_graph.iter_mut().find(|known_word| known_word.0 == preceding_word)
             {
-                let preceding_word_vec = preceding_word_option.unwrap();
                 if !preceding_word_vec.1.iter().any(|subsequent_word| subsequent_word.0 == &text[word_start..counter])
                 {
                     //The subsequent word is new. Initialize with 1 occurrence.
